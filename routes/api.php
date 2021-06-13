@@ -30,4 +30,11 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('/role/permissions/create', 'PermissionsController@creatPermissions')->name('creatPermissions.api');
     Route::post('/role/permissions/delete', 'PermissionsController@deletePermissions')->name('deletePermissions.api');
+
+    Route::post('/role/assign', 'RoleController@assignRole')->name('assignRole.api');
+    Route::post('/role/revoke', 'RoleController@revokeRole')->name('revokeRole.api');
+
+    Route::post('/role/permissions/assign', 'PermissionsController@assignPermissions')->name('assignPermissions.api');
+    Route::post('/role/permissions/revoke', 'PermissionsController@revokePermissions')->name('revokePermissions.api');
+
 });

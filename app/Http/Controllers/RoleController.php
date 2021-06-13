@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
+use App\User;
 
 class RoleController extends Controller
 {
@@ -59,6 +60,65 @@ class RoleController extends Controller
 
     public function assignRole(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'userid' => 'required|integer',
+            'rolename' => 'required|string|max:255',
+        ]);
+        if ($validator->fails()){
+            return response(['errors'=>$validator->errors()->all()], 422);
+        }
 
+        $userid = $request['userid'];
+        $rolename = $request['rolename'];
+
+        $user = User::find($userid);
+
+        if($user)
+        {
+            $role = Role::where('name', $rolename)->first();
+            if($role)
+            {
+                $user->assignRole($rolename);
+                return response(['message' => "Role assignerd sucessfully."], 200);
+            }
+            else
+                return response(['message' => "Role cannot existy."], 422);
+        }
+        else
+        {
+            return response(['message'=> "User cannot exist"], 422);
+        }
     }
+
+    public function revokeRole(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'userid' => 'required|integer',
+            'rolename' => 'required|string|max:255',
+        ]);
+        if ($validator->fails()){
+            return response(['errors'=>$validator->errors()->all()], 422);
+        }
+
+        $userid = $request['userid'];
+        $rolename = $request['rolename'];
+
+        $user = User::find($userid);
+        if($user)
+        {
+            $role = Role::where('name', $rolename)->first();
+            if($role)
+            {
+                $user->removeRole($rolename);
+                return response(['message' => "Role revoked sucessfully."], 200);
+            }
+            else
+                return response(['message' => "Role cannot existy."], 422);
+        }
+        else
+        {
+            return response(['message'=> "User cannot exist"], 422);
+        }
+    }
+    
 }
